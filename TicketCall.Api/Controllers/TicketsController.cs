@@ -121,4 +121,69 @@ public class TicketsController : ControllerBase
         await _context.SaveChangesAsync();
         return NoContent();
     }
+
+    [HttpPatch("{id}/status")]
+    public async Task<IActionResult> UpdateTicketStatus(int id, [FromQuery] Status newStatus)
+    {
+        var ticket = await _context.Tickets.FindAsync(id);
+        if (ticket == null)
+        {
+            return NotFound();
+        }
+
+        if (ticket.Status == newStatus)
+        {
+            return BadRequest("The ticket is already in the specified status.");
+        }
+        else if (ticket.Status == Status.Open)
+        {
+            if (newStatus == Status.InProgress)
+            {
+                ticket.Status = newStatus;
+                ticket.UpdatedAt = DateTime.UtcNow;
+                _context.Entry(ticket).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
+            else if (newStatus == Status.Cancelled)
+            {
+                ticket.Status = newStatus;
+                ticket.UpdatedAt = DateTime.UtcNow;
+                _context.Entry(ticket).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest("Invalid status transition.");
+            }
+        }
+        else if (ticket.Status == Status.InProgress)
+        {
+            if (newStatus == Status.Resolved)
+            {
+                ticket.Status = newStatus;
+                ticket.UpdatedAt = DateTime.UtcNow;
+                _context.Entry(ticket).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
+            else if (newStatus == Status.Cancelled)
+            {
+                ticket.Status = newStatus;
+                ticket.UpdatedAt = DateTime.UtcNow;
+                _context.Entry(ticket).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest("Invalid status transition.");
+            }
+        }
+        else
+        {
+            return BadRequest("Invalid status transition.");
+        }
+    }
 }
