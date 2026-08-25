@@ -1,1 +1,3 @@
-<Solution />
+<Solution>
+  <Project Path="TicketCall.Api/TicketCall.Api.csproj" />
+</Solution>
