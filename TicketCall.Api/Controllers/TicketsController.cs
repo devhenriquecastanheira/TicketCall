@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using TicketCall.Api.Data;
 using TicketCall.Api.Dtos;
 using TicketCall.Api.Entities;
+using TicketCall.Api.Entities.Enums;
 
 namespace TicketCall.Api.Controllers;
 
@@ -19,9 +20,29 @@ public class TicketsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Ticket>>> GetTickets()
+    public async Task<ActionResult<IEnumerable<Ticket>>> GetTickets(
+        [FromQuery] Status? status,
+        [FromQuery] Priority? priority,
+        [FromQuery] string? search)
     {
-        return await _context.Tickets.ToListAsync();
+        var tickets = _context.Tickets.AsQueryable();
+
+        if (status.HasValue)
+        {
+            tickets = tickets.Where(t => t.Status == status.Value);
+        }
+
+        if (priority.HasValue)
+        {
+            tickets = tickets.Where(t => t.Priority == priority.Value);
+        }
+
+        if (!string.IsNullOrEmpty(search))
+        {
+            tickets = tickets.Where(t => t.Title.Contains(search) || t.Description.Contains(search));
+        }
+
+        return await tickets.ToListAsync();
     }
 
     [HttpGet("{id}")]
