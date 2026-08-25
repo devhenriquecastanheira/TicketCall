@@ -139,6 +139,16 @@ public class TicketsController : ControllerBase
         {
             if (newStatus == Status.InProgress)
             {
+                var statusHistory = new TicketHistory
+                {
+                    TicketId = ticket.Id,
+                    OldStatus = ticket.Status,
+                    NewStatus = newStatus,
+                    ChangedAt = DateTime.UtcNow
+                };
+
+                _context.TicketHistories.Add(statusHistory);
+
                 ticket.Status = newStatus;
                 ticket.UpdatedAt = DateTime.UtcNow;
                 _context.Entry(ticket).State = EntityState.Modified;
@@ -147,6 +157,16 @@ public class TicketsController : ControllerBase
             }
             else if (newStatus == Status.Cancelled)
             {
+                var statusHistory = new TicketHistory
+                {
+                    TicketId = ticket.Id,
+                    OldStatus = ticket.Status,
+                    NewStatus = newStatus,
+                    ChangedAt = DateTime.UtcNow
+                };
+
+                _context.TicketHistories.Add(statusHistory);
+
                 ticket.Status = newStatus;
                 ticket.UpdatedAt = DateTime.UtcNow;
                 _context.Entry(ticket).State = EntityState.Modified;
@@ -162,6 +182,16 @@ public class TicketsController : ControllerBase
         {
             if (newStatus == Status.Resolved)
             {
+                var statusHistory = new TicketHistory
+                {
+                    TicketId = ticket.Id,
+                    OldStatus = ticket.Status,
+                    NewStatus = newStatus,
+                    ChangedAt = DateTime.UtcNow
+                };
+
+                _context.TicketHistories.Add(statusHistory);
+
                 ticket.Status = newStatus;
                 ticket.UpdatedAt = DateTime.UtcNow;
                 _context.Entry(ticket).State = EntityState.Modified;
@@ -170,6 +200,16 @@ public class TicketsController : ControllerBase
             }
             else if (newStatus == Status.Cancelled)
             {
+                var statusHistory = new TicketHistory
+                {
+                    TicketId = ticket.Id,
+                    OldStatus = ticket.Status,
+                    NewStatus = newStatus,
+                    ChangedAt = DateTime.UtcNow
+                };
+
+                _context.TicketHistories.Add(statusHistory);
+
                 ticket.Status = newStatus;
                 ticket.UpdatedAt = DateTime.UtcNow;
                 _context.Entry(ticket).State = EntityState.Modified;
@@ -185,5 +225,12 @@ public class TicketsController : ControllerBase
         {
             return BadRequest("Invalid status transition.");
         }
+    }
+
+    [HttpGet("{id}/history")]
+    public async Task<IActionResult> GetTicketHistory(int id)
+    {
+        var ticketHistories = await _context.TicketHistories.Where(th => th.TicketId == id).ToListAsync();
+        return Ok(ticketHistories);
     }
 }
