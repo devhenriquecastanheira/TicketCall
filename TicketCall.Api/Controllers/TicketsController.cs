@@ -84,7 +84,6 @@ public class TicketsController : ControllerBase
 
         ticket.Title = dto.Title;
         ticket.Description = dto.Description;
-        ticket.Status = dto.Status;
         ticket.Priority = dto.Priority;
         ticket.UpdatedAt = DateTime.UtcNow;
 
