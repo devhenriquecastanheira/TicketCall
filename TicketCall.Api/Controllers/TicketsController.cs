@@ -229,6 +229,12 @@ public class TicketsController : ControllerBase
     [HttpGet("{id}/history")]
     public async Task<IActionResult> GetTicketHistory(int id)
     {
+        var ticketExists = await _context.Tickets.AnyAsync(t => t.Id == id);
+        if (!ticketExists)
+        {
+            return NotFound();
+        }
+
         var ticketHistories = await _context.TicketHistories.Where(th => th.TicketId == id).ToListAsync();
         return Ok(ticketHistories);
     }
